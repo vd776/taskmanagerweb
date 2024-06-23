@@ -5,7 +5,7 @@ from flask_login import login_user
 from flask_security import login_required, roles_required, current_user
 from app import db, get_user_datastore
 from app.forms import RegistrationForm, LoginForm, TaskForm, ProjectForm, AddUserForm, SearchForm, EditProjectForm
-from app.models import Project, Task, User, generate_specific_password_hash
+from app.models import Project, Task, User, generate_specific_password_hash, Invitation
 
 bp = Blueprint('main', __name__)
 
@@ -17,6 +17,19 @@ def home():
     return render_template('index.html')
 
 
+# @bp.route('/register', methods=['GET', 'POST'])
+# def register():
+#     if current_user.is_authenticated:
+#         return redirect(url_for('main.home'))
+#
+#     form = RegistrationForm()
+#     if form.validate_on_submit():
+#         encrypted_password = generate_specific_password_hash(form.password.data)
+#         user_datastore.create_user(email=form.email.data, password=encrypted_password)
+#         db.session.commit()
+#         return redirect(url_for('main.login_custom'))
+#     return render_template('register.html', form=form)
+
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -24,6 +37,11 @@ def register():
 
     form = RegistrationForm()
     if form.validate_on_submit():
+        existing_user = User.query.filter_by(email=form.email.data).first()
+        if existing_user:
+            flash('A user with this email already exists. Please use a different email.', 'danger')
+            return render_template('register.html', form=form)
+
         encrypted_password = generate_specific_password_hash(form.password.data)
         user_datastore.create_user(email=form.email.data, password=encrypted_password)
         db.session.commit()
@@ -94,15 +112,46 @@ def new_project():
     return render_template('new_project.html', form=form)
 
 
-@bp.route('/projects/<int:project_id>', methods=['GET'])
+# @bp.route('/projects/<int:project_id>', methods=['GET'])
+# @login_required
+# def project_detail(project_id):
+#     project = Project.query.get_or_404(project_id)
+#     if project.user_id != current_user.id and current_user not in project.assigned_users:
+#         flash("You don't have access to this project.", 'danger')
+#         return redirect(url_for('main.projects'))
+#
+#     return render_template('project_detail.html', project=project, is_owner=project.user_id == current_user.id)
+
+@bp.route('/projects/<int:project_id>', methods=['GET', 'POST'])
 @login_required
 def project_detail(project_id):
     project = Project.query.get_or_404(project_id)
-    if project.user_id != current_user.id and current_user not in project.assigned_users:
+    invitation = Invitation.query.filter_by(user_id=current_user.id, project_id=project_id).first()
+
+    # Check if the user is the owner, a participant, or has been invited
+    is_owner = project.user_id == current_user.id
+    is_participant = current_user in project.users
+    is_invited = invitation is not None
+
+    if not (is_owner or is_participant or is_invited):
         flash("You don't have access to this project.", 'danger')
         return redirect(url_for('main.projects'))
 
-    return render_template('project_detail.html', project=project, is_owner=project.user_id == current_user.id)
+    if is_invited and request.method == 'POST':
+        action = request.form.get('action')
+        if action == 'accept':
+            project.users.append(current_user)
+            db.session.delete(invitation)
+            db.session.commit()
+            flash('Invitation accepted!', 'success')
+        elif action == 'decline':
+            db.session.delete(invitation)
+            db.session.commit()
+            flash('Invitation declined!', 'success')
+        return redirect(url_for('main.project_detail', project_id=project_id))
+
+    return render_template('project_detail.html', project=project, is_owner=is_owner, is_participant=is_participant, is_invited=is_invited)
+
 
 
 @bp.route('/projects/<int:project_id>/tasks/<int:task_id>')
@@ -114,7 +163,6 @@ def task_detail(project_id, task_id):
         flash("You don't have access to this task.", 'danger')
         return redirect(url_for('main.projects'))
     return render_template('task_detail.html', task=task)
-
 
 
 @bp.route('/projects/<int:project_id>/tasks/new', methods=['GET', 'POST'])
@@ -208,49 +256,127 @@ def update_task_status(project_id, task_id):
     return redirect(url_for('main.project_detail', project_id=project_id))
 
 
+# @bp.route('/projects/<int:project_id>/users', methods=['GET', 'POST'])
+# @login_required
+# def project_users(project_id):
+#     project = Project.query.get_or_404(project_id)
+#     is_owner = project.user_id == current_user.id
+#
+#     if project.user_id != current_user.id and current_user not in project.assigned_users:
+#         flash("You don't have access to modify this project.", 'danger')
+#         return redirect(url_for('main.project_detail', project_id=project_id))
+#
+#     add_user_form = AddUserForm()
+#     if is_owner and add_user_form.validate_on_submit():
+#         user = User.query.filter_by(email=add_user_form.email.data).first()
+#         if user:
+#             if user not in project.users:
+#                 project.users.append(user)
+#                 db.session.commit()
+#                 flash('User added to project!', 'success')
+#             else:
+#                 flash('User is already a member of the project.', 'warning')
+#         else:
+#             flash('User not found.', 'danger')
+#
+#     return render_template('project_users.html', project=project, add_user_form=add_user_form, is_owner=is_owner)
+
+# @bp.route('/projects/<int:project_id>/users', methods=['GET', 'POST'])
+# @login_required
+# def project_users(project_id):
+#     project = Project.query.get_or_404(project_id)
+#     is_owner = project.user_id == current_user.id
+#
+#     if project.user_id != current_user.id and current_user not in project.assigned_users:
+#         flash("You don't have access to modify this project.", 'danger')
+#         return redirect(url_for('main.project_detail', project_id=project_id))
+#
+#     add_user_form = AddUserForm()
+#     if is_owner and add_user_form.validate_on_submit():
+#         user = User.query.filter_by(email=add_user_form.email.data).first()
+#         if user:
+#             existing_invitation = Invitation.query.filter_by(project_id=project_id, user_id=user.id,
+#                                                              status='Pending').first()
+#             if existing_invitation:
+#                 flash('User is already invited to the project.', 'warning')
+#             else:
+#                 invitation = Invitation(project_id=project_id, user_id=user.id)
+#                 db.session.add(invitation)
+#                 db.session.commit()
+#                 flash('User invited to project!', 'success')
+#         else:
+#             flash('User not found.', 'danger')
+#
+#     return render_template('project_users.html', project=project, add_user_form=add_user_form, is_owner=is_owner)
+
 @bp.route('/projects/<int:project_id>/users', methods=['GET', 'POST'])
 @login_required
 def project_users(project_id):
     project = Project.query.get_or_404(project_id)
     is_owner = project.user_id == current_user.id
+    is_participant = current_user in project.users
+    invitation = Invitation.query.filter_by(user_id=current_user.id, project_id=project_id).first()
+    is_invited = invitation is not None
 
-    if project.user_id != current_user.id and current_user not in project.assigned_users:
-        flash("You don't have access to modify this project.", 'danger')
-        return redirect(url_for('main.project_detail', project_id=project_id))
+    if not (is_owner or is_participant or is_invited):
+        flash("You don't have access to this project.", 'danger')
+        return redirect(url_for('main.projects'))
 
     add_user_form = AddUserForm()
     if is_owner and add_user_form.validate_on_submit():
         user = User.query.filter_by(email=add_user_form.email.data).first()
         if user:
             if user not in project.users:
-                project.users.append(user)
+                invitation = Invitation(user_id=user.id, project_id=project.id)
+                db.session.add(invitation)
                 db.session.commit()
-                flash('User added to project!', 'success')
+                flash('User invited to project!', 'success')
             else:
                 flash('User is already a member of the project.', 'warning')
         else:
             flash('User not found.', 'danger')
 
-    return render_template('project_users.html', project=project, add_user_form=add_user_form, is_owner=is_owner)
+    return render_template('project_users.html', project=project, add_user_form=add_user_form, is_owner=is_owner, is_participant=is_participant, is_invited=is_invited)
+
+# ------------------------------------------------------------------------------------
+@bp.route('/inbox')
+@login_required
+def inbox():
+    invitations = Invitation.query.filter_by(user_id=current_user.id, status='Pending').all()
+    return render_template('inbox.html', invitations=invitations)
 
 
-# @bp.route('/projects/<int:project_id>/users/remove/<int:user_id>', methods=['POST'])
-# @login_required
-# def remove_user_from_project(project_id, user_id):
-#     project = Project.query.get_or_404(project_id)
-#     user = User.query.get_or_404(user_id)
-#     if project.user_id != current_user.id:
-#         flash("You don't have access to modify this project.", 'danger')
-#         return redirect(url_for('main.project_users', project_id=project_id))
-#
-#     if user in project.users:
-#         project.users.remove(user)
-#         db.session.commit()
-#         flash('User removed from project!', 'success')
-#     else:
-#         flash('User is not a member of the project.', 'warning')
-#
-#     return redirect(url_for('main.project_users', project_id=project_id))
+@bp.route('/inbox/<int:invitation_id>/accept', methods=['POST'])
+@login_required
+def accept_invitation(invitation_id):
+    invitation = Invitation.query.get_or_404(invitation_id)
+    if invitation.user_id != current_user.id:
+        flash("You don't have permission to accept this invitation.", 'danger')
+        return redirect(url_for('main.inbox'))
+
+    invitation.status = 'Accepted'
+    project = Project.query.get(invitation.project_id)
+    project.users.append(current_user)
+    db.session.commit()
+    flash('Invitation accepted!', 'success')
+    return redirect(url_for('main.inbox'))
+
+
+@bp.route('/inbox/<int:invitation_id>/decline', methods=['POST'])
+@login_required
+def decline_invitation(invitation_id):
+    invitation = Invitation.query.get_or_404(invitation_id)
+    if invitation.user_id != current_user.id:
+        flash("You don't have permission to decline this invitation.", 'danger')
+        return redirect(url_for('main.inbox'))
+
+    invitation.status = 'Declined'
+    db.session.commit()
+    flash('Invitation declined.', 'success')
+    return redirect(url_for('main.inbox'))
+
+
+# ------------------------------------------------------------------------------------
 
 @bp.route('/projects/<int:project_id>/users/remove/<int:user_id>', methods=['POST'])
 @login_required
@@ -275,51 +401,6 @@ def remove_user_from_project(project_id, user_id):
 
     return redirect(url_for('main.project_users', project_id=project_id))
 
-
-# @bp.route('/user/<int:user_id>', methods=['GET'])
-# @login_required
-# def user_profile(user_id):
-#     user = User.query.get_or_404(user_id)
-#
-#     # Total number of projects
-#     total_projects = len(user.owned_projects) + len(user.assigned_projects)
-#
-#     # Total number of owned projects
-#     owned_projects_count = len(user.owned_projects)
-#
-#     # Total number of assigned projects
-#     assigned_projects_count = len(user.assigned_projects)
-#
-#     # Total number of assigned tasks
-#     assigned_tasks_count = len(user.assigned_tasks)
-#
-#     # Mutual projects with the current user
-#     mutual_projects = list(set(user.assigned_projects).intersection(set(current_user.assigned_projects)))
-#
-#     is_owner = current_user.id == user.id
-#
-#     return render_template('user_profile.html', user=user, total_projects=total_projects,
-#                            owned_projects_count=owned_projects_count, assigned_projects_count=assigned_projects_count,
-#                            assigned_tasks_count=assigned_tasks_count, mutual_projects=mutual_projects,
-#                            is_owner=is_owner)
-
-
-# @bp.route('/user/<int:user_id>')
-# @login_required
-# def user_profile(user_id):
-#     user = User.query.get_or_404(user_id)
-#     total_projects = len(list(user.owned_projects)) + len(list(user.assigned_projects))
-#     owned_projects_count = len(list(user.owned_projects))
-#     assigned_projects_count = len(list(user.assigned_projects))
-#     assigned_tasks_count = len(list(user.assigned_tasks))
-#
-#     mutual_projects = []
-#     if user != current_user:
-#         mutual_projects = list(set(user.assigned_projects).intersection(set(current_user.assigned_projects)))
-#
-#     return render_template('user_profile.html', user=user, total_projects=total_projects,
-#                            owned_projects_count=owned_projects_count, assigned_projects_count=assigned_projects_count,
-#                            assigned_tasks_count=assigned_tasks_count, mutual_projects=mutual_projects)
 
 @bp.route('/user/<int:user_id>')
 @login_required
@@ -357,10 +438,6 @@ def user_assigned_tasks(user_id):
     return render_template('user_assigned_tasks.html', user=user, assigned_tasks=assigned_tasks)
 
 
-
-
-
-
 @bp.route('/projects/<int:project_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_project(project_id):
@@ -378,7 +455,6 @@ def edit_project(project_id):
         return redirect(url_for('main.project_detail', project_id=project_id))
 
     return render_template('edit_project.html', form=form, project=project)
-
 
 
 @bp.route('/projects/<int:project_id>/delete', methods=['POST'])

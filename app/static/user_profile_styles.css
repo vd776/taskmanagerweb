@@ -1,0 +1,66 @@
+/* General card styling */
+.card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: box-shadow 0.3s ease-in-out;
+  margin-bottom: 20px;
+}
+
+.card:hover {
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.card-header {
+  background-color: #007bff;
+  color: #fff;
+  border-bottom: 1px solid #ddd;
+  border-radius: 10px 10px 0 0;
+  padding: 10px 15px;
+}
+
+.card-body {
+  padding: 15px;
+}
+
+.card h4 {
+  margin: 0;
+}
+
+.list-group-item {
+  border: none;
+  padding-left: 0;
+}
+
+.list-group-item a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+.list-group-item a:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+/* Button styling */
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: #fff;
+  transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #004b93;
+}
+
+/* Container adjustments */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.text-center {
+  text-align: center;
+}

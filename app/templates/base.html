@@ -59,9 +59,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Task Manager</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/projects_styles.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/project_detail_styles.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='registration_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='projects_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='project_detail_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='auth_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='user_profile_styles.css') }}">
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -69,6 +72,9 @@
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav ml-auto">
           {% if current_user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('main.inbox') }}">Inbox</a>
+            </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('main.projects') }}">Projects</a>
             </li>

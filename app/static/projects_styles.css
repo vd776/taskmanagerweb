@@ -1,27 +1,37 @@
+/* General card styling */
 .card {
   border: 1px solid #ddd;
   border-radius: 10px;
   padding: 15px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  transition: box-shadow 0.3s ease-in-out;
+  transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
 .card:hover {
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  transform: translateY(-5px);
 }
 
+/* Title styling */
 .card-title {
   font-size: 1.25rem;
   font-weight: bold;
+  color: #333;
 }
 
+/* Text styling */
 .card-text {
   margin-bottom: 15px;
+  color: #555;
+  min-height: 60px; /* Ensures consistency in card height */
 }
 
+/* Button styling */
 .btn-primary {
   background-color: #007bff;
   border-color: #007bff;
+  color: #fff;
+  transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
 }
 
 .btn-primary:hover {
@@ -29,6 +39,7 @@
   border-color: #004b93;
 }
 
+/* Input group styling */
 .input-group {
   display: flex;
   justify-content: center;
@@ -40,9 +51,11 @@
   border-radius: 5px 0 0 5px;
   border-right: 0;
 }
+
 .input-group select {
   border-radius: 0;
 }
+
 .input-group .btn {
   border-radius: 0 5px 5px 0;
 }
@@ -55,6 +68,7 @@
   background-color: #ced4da;
 }
 
+/* Description toggle */
 .task-desc {
   position: relative;
 }
@@ -71,9 +85,29 @@
   display: none;
 }
 
+/* Link button */
 .btn-link {
   padding: 0;
   border: none;
   background: none;
   text-decoration: underline;
+  color: #007bff;
 }
+
+.btn-link:hover {
+  color: #0056b3;
+  text-decoration: none;
+}
+
+/* Flexbox layout for card actions */
+.card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.card-body .btn-primary {
+  margin-top: auto;
+}
+
