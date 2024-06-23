@@ -1,0 +1,79 @@
+{##}
+{##}
+{#{% extends "base.html" %}#}
+{##}
+{#{% block content %}#}
+{#<div class="container">#}
+{#  <h1 class="text-center my-4">{{ project.name }} - Project Users</h1>#}
+{#  <div class="mb-4">#}
+{#    <h3>Project Members</h3>#}
+{#    <ul>#}
+{#      <li>{{ project.user.email }} (Owner)</li>#}
+{#      {% for user in project.users %}#}
+{#      <li>{{ user.email }}#}
+{#        {% if is_owner %}#}
+{#        <form action="{{ url_for('main.remove_user_from_project', project_id=project.id, user_id=user.id) }}" method="post" style="display:inline;">#}
+{#          <button type="submit" class="btn btn-danger btn-sm">Remove</button>#}
+{#        </form>#}
+{#        {% endif %}#}
+{#      </li>#}
+{#      {% endfor %}#}
+{#    </ul>#}
+{#    {% if is_owner %}#}
+{#    <form action="{{ url_for('main.project_users', project_id=project.id) }}" method="post">#}
+{#      {{ add_user_form.hidden_tag() }}#}
+{#      <div class="form-group">#}
+{#        {{ add_user_form.email.label(class="form-label") }}#}
+{#        {{ add_user_form.email(class="form-control") }}#}
+{#        {% for error in add_user_form.email.errors %}#}
+{#          <span class="text-danger">{{ error }}</span>#}
+{#        {% endfor %}#}
+{#      </div>#}
+{#      <button type="submit" class="btn btn-primary">Add User</button>#}
+{#    </form>#}
+{#    {% endif %}#}
+{#  </div>#}
+{#  <a href="{{ url_for('main.project_detail', project_id=project.id) }}" class="btn btn-secondary">Back to Project</a>#}
+{#</div>#}
+{#{% endblock %}#}
+{##}
+
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <h1 class="text-center my-4">{{ project.name }} - Project Users</h1>
+  <div class="mb-4">
+    <h3>Project Members</h3>
+    <ul>
+      <li><a href="{{ url_for('main.user_profile', user_id=project.user.id) }}">{{ project.user.email }}</a> (Owner)</li>
+      {% for user in project.users %}
+      <li>
+        <a href="{{ url_for('main.user_profile', user_id=user.id) }}">{{ user.email }}</a>
+        {% if is_owner %}
+        <form action="{{ url_for('main.remove_user_from_project', project_id=project.id, user_id=user.id) }}" method="post" style="display:inline;">
+          <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+        </form>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% if is_owner %}
+    <form action="{{ url_for('main.project_users', project_id=project.id) }}" method="post">
+      {{ add_user_form.hidden_tag() }}
+      <div class="form-group">
+        {{ add_user_form.email.label(class="form-label") }}
+        {{ add_user_form.email(class="form-control") }}
+        {% for error in add_user_form.email.errors %}
+          <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+      </div>
+      <button type="submit" class="btn btn-primary">Add User</button>
+    </form>
+    {% endif %}
+  </div>
+  <a href="{{ url_for('main.project_detail', project_id=project.id) }}" class="btn btn-secondary">Back to Project</a>
+</div>
+{% endblock %}
+

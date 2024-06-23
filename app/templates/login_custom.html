@@ -1,0 +1,72 @@
+{#{% extends "base.html" %}#}
+{#{% block content %}#}
+{#<body class="auth-page">#}
+{#<div class="container auth-container">#}
+{#  <div class="auth-wrapper">#}
+{#    <div class="title"><span>Login</span></div>#}
+{#    <form method="POST" action="{{ url_for('main.login_custom') }}">#}
+{#      {{ form.hidden_tag() }}#}
+{#      <div class="row">#}
+{#        <i class="fas fa-user"></i>#}
+{#        {{ form.email(class_='form-control', placeholder='Email') }}#}
+{#        {% for error in form.email.errors %}#}
+{#          <span class="text-danger">{{ error }}</span>#}
+{#        {% endfor %}#}
+{#      </div>#}
+{#      <div class="row">#}
+{#        <i class="fas fa-lock"></i>#}
+{#        {{ form.password(class_='form-control', placeholder='Password') }}#}
+{#        {% for error in form.password.errors %}#}
+{#          <span class="text-danger">{{ error }}</span>#}
+{#        {% endfor %}#}
+{#      </div>#}
+{#      <div class="row form-check">#}
+{#        {{ form.remember(class_='form-check-input') }}#}
+{#        {{ form.remember.label(class_='form-check-label', for='remember') }}#}
+{#      </div>#}
+{#      <div class="row button">#}
+{#        {{ form.submit(class_='btn btn-primary btn-block', value='Login') }}#}
+{#      </div>#}
+{#      <div class="signup-link">Not a member? <a href="{{ url_for('main.register') }}">Signup now</a></div>#}
+{#    </form>#}
+{#  </div>#}
+{#</div>#}
+{#</body>#}
+{#{% endblock %}#}
+
+{% extends "base.html" %}
+{% block content %}
+<div class="container auth-container">
+  <div class="auth-wrapper">
+    <h2 class="text-center my-4">Login</h2>
+    <form method="POST" action="{{ url_for('main.login_custom') }}">
+      {{ form.hidden_tag() }}
+      <div class="form-group">
+        <label for="email" class="form-label">Email</label>
+        {{ form.email(class_='form-control', placeholder='Email') }}
+        {% for error in form.email.errors %}
+          <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+      </div>
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        {{ form.password(class_='form-control', placeholder='Password') }}
+        {% for error in form.password.errors %}
+          <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+      </div>
+      <div class="form-group form-check">
+        {{ form.remember(class_='form-check-input') }}
+        {{ form.remember.label(class_='form-check-label', for='remember') }}
+      </div>
+      <div class="form-group">
+        {{ form.submit(class_='btn btn-primary btn-block') }}
+      </div>
+      <div class="text-center">
+        <p>Not a member? <a href="{{ url_for('main.register') }}">Signup now</a></p>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+

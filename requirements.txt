@@ -1,0 +1,15 @@
+Flask
+Flask-SQLAlchemy
+Flask-Migrate
+Flask-Security-Too
+setuptools
+PyMySQL
+email-validator==1.1.3
+passlib
+SQLAlchemy
+pyodbc
+WTForms==3.1.2
+bcrypt==4.0.1
+Werkzeug
+waitress
+gunicorn

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <h1 class="text-center my-4">{{ user.email }}'s Assigned Tasks</h1>
+  
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Task Title</th>
+          <th scope="col">Project</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for task in assigned_tasks %}
+        <tr>
+          <th scope="row">{{ loop.index }}</th>
+          <td>{{ task.title }}</td>
+          <td><a href="{{ url_for('main.project_detail', project_id=task.project.id) }}">{{ task.project.name }}</a></td>
+          <td>
+            <a href="{{ url_for('main.task_detail', project_id=task.project.id, task_id=task.id) }}" class="btn btn-primary btn-sm">View Task</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="row mb-4">
+    <div class="col-md-12 text-center">
+      <a href="{{ url_for('main.user_profile', user_id=user.id) }}" class="btn btn-secondary">Back to Profile</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

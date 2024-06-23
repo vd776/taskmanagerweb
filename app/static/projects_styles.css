@@ -1,0 +1,79 @@
+.card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.card:hover {
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.card-text {
+  margin-bottom: 15px;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #004b93;
+}
+
+.input-group {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.input-group .form-control {
+  width: 300px;
+  border-radius: 5px 0 0 5px;
+  border-right: 0;
+}
+.input-group select {
+  border-radius: 0;
+}
+.input-group .btn {
+  border-radius: 0 5px 5px 0;
+}
+
+.input-group .btn-outline-secondary {
+  border-color: #ced4da;
+}
+
+.input-group .btn-outline-secondary:hover {
+  background-color: #ced4da;
+}
+
+.task-desc {
+  position: relative;
+}
+
+.short-desc {
+  display: inline;
+}
+
+.full-desc {
+  display: inline;
+}
+
+.d-none {
+  display: none;
+}
+
+.btn-link {
+  padding: 0;
+  border: none;
+  background: none;
+  text-decoration: underline;
+}
