@@ -44,24 +44,29 @@ a:hover {
     <div class="card-body">
       <h3 class="card-title">Pending Invitations</h3>
       <ul class="list-group list-group-flush">
-        {% for invitation in invitations %}
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          <div>
-            <strong>Project:</strong>
-            <a href="{{ url_for('main.project_detail', project_id=invitation.project.id) }}">
-              {{ invitation.project.name }}
-            </a>
-          </div>
-          <div>
-            <form action="{{ url_for('main.accept_invitation', invitation_id=invitation.id) }}" method="post" style="display:inline;">
-              <button type="submit" class="btn btn-success btn-sm">Accept</button>
-            </form>
-            <form action="{{ url_for('main.decline_invitation', invitation_id=invitation.id) }}" method="post" style="display:inline;">
-              <button type="submit" class="btn btn-danger btn-sm">Decline</button>
-            </form>
-          </div>
-        </li>
-        {% endfor %}
+        {% if invitations %}
+            {% for invitation in invitations %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <strong>Project:</strong>
+                <a href="{{ url_for('main.project_detail', project_id=invitation.project.id) }}">
+                  {{ invitation.project.name }}
+                </a>
+              </div>
+              <div>
+                <form action="{{ url_for('main.accept_invitation', invitation_id=invitation.id) }}" method="post" style="display:inline;">
+                  <button type="submit" class="btn btn-success btn-sm">Accept</button>
+                </form>
+                <form action="{{ url_for('main.decline_invitation', invitation_id=invitation.id) }}" method="post" style="display:inline;">
+                  <button type="submit" class="btn btn-danger btn-sm">Decline</button>
+                </form>
+              </div>
+            </li>
+            {% endfor %}
+        {% endif %}
+        {% if not invitations %}
+             <p>Empty..</p>
+        {% endif %}
       </ul>
     </div>
   </div>

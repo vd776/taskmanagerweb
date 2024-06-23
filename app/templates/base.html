@@ -1,57 +1,3 @@
-{#<!doctype html>#}
-{#<html lang="en">#}
-{#  <head>#}
-{#    <meta charset="utf-8">#}
-{#    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">#}
-{#    <title>Task Manager</title>#}
-{#    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">#}
-{#      <link rel="stylesheet" href="{{ url_for('static', filename='css/projects_styles.css') }}">#}
-{#      <link rel="stylesheet" href="{{ url_for('static', filename='css/project_detail_styles.css') }}">#}
-{#  </head>#}
-{#  <body>#}
-{#    <nav class="navbar navbar-expand-lg navbar-light bg-light">#}
-{#      <a class="navbar-brand" href="{{ url_for('main.home') }}">Task Manager</a>#}
-{#      <div class="collapse navbar-collapse">#}
-{#        <ul class="navbar-nav ml-auto">#}
-{#          {% if current_user.is_authenticated %}#}
-{#            <li class="nav-item">#}
-{#              <a class="nav-link" href="{{ url_for('main.projects') }}">Projects</a>#}
-{#            </li>#}
-{#            <li class="nav-item">#}
-{#              <a class="nav-link" href="{{ url_for('security.logout') }}">Logout</a>#}
-{#            </li>#}
-{#          {% else %}#}
-{#            <li class="nav-item">#}
-{#              <a class="nav-link" href="{{ url_for('main.login_custom') }}">Login</a>#}
-{#            </li>#}
-{#            <li class="nav-item">#}
-{#              <a class="nav-link" href="{{ url_for('main.register') }}">Register</a>#}
-{#            </li>#}
-{#          {% endif %}#}
-{#        </ul>#}
-{#      </div>#}
-{#    </nav>#}
-{#    <div class="container">#}
-{#      {% with messages = get_flashed_messages(with_categories=true) %}#}
-{#        {% if messages %}#}
-{#          <div class="alert alert-dismissible fade show" role="alert">#}
-{#            {% for category, message in messages %}#}
-{#              <div class="alert alert-{{ category }}">{{ message }}</div>#}
-{#            {% endfor %}#}
-{#            <button type="button" class="close" data-dismiss="alert" aria-label="Close">#}
-{#              <span aria-hidden="true">&times;</span>#}
-{#            </button>#}
-{#          </div>#}
-{#        {% endif %}#}
-{#      {% endwith %}#}
-{#      {% block content %}{% endblock %}#}
-{#    </div>#}
-{#    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>#}
-{#    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>#}
-{#    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>#}
-{#  </body>#}
-{#</html>#}
-
 <!doctype html>
 <html lang="en">
   <head>
@@ -60,6 +6,7 @@
     <title>Task Manager</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='task_detail_styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='registration_styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='projects_styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='project_detail_styles.css') }}">
